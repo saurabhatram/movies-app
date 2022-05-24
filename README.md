@@ -1,7 +1,8 @@
 # movies-app
 
-Movies site made with React
-Users can
+Movies site made with React.
+
+In this users can
 
 1. Search for latest Movies
 2. Add to favourites
