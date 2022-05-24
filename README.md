@@ -1,4 +1,4 @@
-# Movies-app
+# Movies-App
 
 Movies site made with React.
 
