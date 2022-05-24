@@ -8,6 +8,8 @@ export class Favourites extends Component {
       currGenre: "All Genres",
       movies: [],
       currText:'',
+      limit:5,
+      currPage:1
     }
 
   }
@@ -79,6 +81,19 @@ export class Favourites extends Component {
       movies:[...temp]
     })
   }
+  handlePageChange=(page)=>{
+    this.setState({
+      currPage:page
+    })
+  }
+handleDelete=(id)=>{
+  let narr=[]
+  narr= this.state.movies.filter((movieObj)=>movieObj.id!=id)
+  this.setState({
+    movies:[...narr]
+  })
+  localStorage.setItem("movies-app",JSON.stringify(narr))
+}
   render() {
 
 
@@ -108,7 +123,14 @@ export class Favourites extends Component {
       filterArr=this.state.movies.filter((movieObj)=>genreids[movieObj.genre_ids[0]]==this.state.currGenre)
     }
 
-
+    let pages= Math.ceil(filterArr.length/this.state.limit)
+    let pagesarr=[]
+    for (let i = 1; i <=pages; i++) {
+      pagesarr.push(i);
+    }
+    let si=(this.state.currPage-1)*this.state.limit
+    let ei= si+this.state.limit;
+    filterArr= filterArr.slice(si,ei)
     return (
       <div className='main'>
         <div className='row'>
@@ -128,7 +150,7 @@ export class Favourites extends Component {
           <div className='col-9 favourites-table'>
             <div className='row'>
               <input type='text' placeholder='Search' className="input-group-text col" value={this.state.currText} onChange={(e)=>this.setState({currText:e.target.value})}/>
-              <input type='number' className="input-group-number col" />
+              <input type='number' className="input-group-number col" value={this.state.limit} onChange={(e)=>this.setState({limit:e.target.value})} />
 
             </div>
             <table class="table">
@@ -142,7 +164,7 @@ export class Favourites extends Component {
 
                 </tr>
               </thead>
-              <tbody>
+              <tbody> 
                 {
                   filterArr.map((MovieEle) => (
                     <tr>
@@ -151,7 +173,7 @@ export class Favourites extends Component {
                       <td>{genreids[MovieEle.genre_ids[0]]}</td>
                       <td>{MovieEle.popularity}</td>
                       <td>{MovieEle.vote_average}</td>
-                      <td><button type="button" class="btn btn-danger">Delete</button></td>
+                      <td><button type="button" class="btn btn-danger" onClick={()=>this.handleDelete(MovieEle.id)}>Delete</button></td>
                     </tr>
 
                   ))
@@ -162,11 +184,14 @@ export class Favourites extends Component {
               <div>
                 <nav aria-label="Page navigation example">
                   <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    {
+                      pagesarr.map((page)=>(
+                        <li class="page-item"><a class="page-link" onClick={()=>this.handlePageChange(page)}>{page}</a></li>
+                      )
+
+                      )
+                    }
+
                   </ul>
                 </nav>
               </div>
